@@ -1,4 +1,4 @@
-package pl.coderslab.User;
+package pl.coderslab.Commons.Utils;
 
 public enum UserRole {
 	
