@@ -10,7 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pl.coderslab.Commons.Utils.UserRole;
-import pl.coderslab.Project.domain.Project;
+import pl.coderslab.Project.dto.ProjectDto;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -34,5 +34,5 @@ public class UserDto {
 	@NotBlank
 	private UserRole userRole;
 
-	private Set<Project> projects = new HashSet<>();
+	private Set<ProjectDto> projects = new HashSet<>();
 }

@@ -10,6 +10,7 @@ public class CrmApplication {
 		SpringApplication.run(CrmApplication.class, args);
 	}
 
-	// aktywność - wykonać wg wzorca Obserwator
+	// aktywność - wykonać wg wzorca Obserwator; obserwator powinni być dodawani
+	// w metodzie postConstruct - obserwator to singleton
 
 }

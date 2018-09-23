@@ -46,19 +46,4 @@ public class Project {
 
 	private Boolean isActive;
 
-	@Transient // przenieść do serwisu
-	private String createIdentifier(String name) {
-		String identifier = name.toLowerCase();
-		identifier.replaceAll("ó", "o");
-		identifier.replaceAll("ł", "l");
-		identifier.replaceAll("ą", "a");
-		identifier.replaceAll("ż", "z");
-		identifier.replaceAll("ę", "e");
-		identifier.replaceAll("ź", "z");
-		identifier.replaceAll("ń", "n");
-		identifier.replaceAll("ć", "c");
-		
-		return identifier;
-
-	}
 }
