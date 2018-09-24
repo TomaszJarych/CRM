@@ -12,6 +12,7 @@ import pl.coderslab.Project.Service.ProjectService;
 import pl.coderslab.Project.domain.Project;
 import pl.coderslab.Project.dto.ProjectDto;
 import pl.coderslab.User.Repository.UserRepository;
+import pl.coderslab.User.Service.UserService;
 import pl.coderslab.User.Service.Implementation.UserServiceImpl;
 
 @Service
@@ -19,15 +20,18 @@ public class ProjectServiceImpl implements ProjectService {
 
 	private final ProjectRepository projectRepository;
 	private final UserRepository userRepository;
-	private final UserServiceImpl userService;
-	
-	//zmienić importy aby uniknąć błędu nieprzerwanego cyklu!
+	private UserService userService;
 
 	@Autowired
 	public ProjectServiceImpl(ProjectRepository projectRepository,
-			UserRepository userRepository, UserServiceImpl userService) {
+			UserRepository userRepository) {
 		this.projectRepository = projectRepository;
 		this.userRepository = userRepository;
+	}
+
+	// wstrzyknięcie poprzez setter - aby uniknąć zapętlenia
+	@Autowired
+	public void setUserServiceImp(UserService userService) {
 		this.userService = userService;
 	}
 
@@ -57,11 +61,11 @@ public class ProjectServiceImpl implements ProjectService {
 		dto.setName(project.getName());
 		dto.setDescription(project.getDescription());
 		dto.setCreated(project.getCreated());
-		dto.setIdentifier(createIdentifier(project.getIdentifier()));
+		dto.setIdentifier(project.getIdentifier());
 		dto.setIsActive(project.getIsActive());
 
-		if (Objects.nonNull(dto.getUsers()) && !dto.getUsers().isEmpty()) {
-			project.getUsers().stream().filter(Objects::nonNull)
+		if (Objects.nonNull(project.getUsers()) && !project.getUsers().isEmpty()) {
+			project.getUsers().stream()
 					.map(userService::toSimpleDto)
 					.forEach(el -> dto.getUsers().add(el));;
 		}
@@ -76,22 +80,18 @@ public class ProjectServiceImpl implements ProjectService {
 		dto.setName(project.getName());
 		dto.setDescription(project.getDescription());
 		dto.setCreated(project.getCreated());
-		dto.setIdentifier(createIdentifier(project.getIdentifier()));
+		dto.setIdentifier(project.getIdentifier());
 		dto.setIsActive(project.getIsActive());
+		dto.setWebsite(project.getWebsite());
 
 		return dto;
 	}
 
 	private String createIdentifier(String name) {
-		String identifier = name.toLowerCase();
-		identifier.replaceAll("ó", "o");
-		identifier.replaceAll("ł", "l");
-		identifier.replaceAll("ą", "a");
-		identifier.replaceAll("ż", "z");
-		identifier.replaceAll("ę", "e");
-		identifier.replaceAll("ź", "z");
-		identifier.replaceAll("ń", "n");
-		identifier.replaceAll("ć", "c");
+		String identifier = name.toLowerCase().trim().replaceAll("ó", "o")
+				.replaceAll("ł", "l").replaceAll("ą", "a").replaceAll("ż", "z")
+				.replaceAll("ę", "e").replaceAll("ź", "z").replaceAll("ń", "n")
+				.replaceAll("ć", "c").replaceAll("\\s", "-");
 
 		return identifier;
 
@@ -109,8 +109,9 @@ public class ProjectServiceImpl implements ProjectService {
 		project.setName(dto.getName());
 		project.setDescription(dto.getDescription());
 		project.setCreated(dto.getCreated());
-		project.setIdentifier(createIdentifier(dto.getIdentifier()));
+		project.setIdentifier(createIdentifier(dto.getName()));
 		project.setIsActive(dto.getIsActive());
+		project.setWebsite(dto.getWebsite());
 
 		if (Objects.nonNull(dto.getUsers()) && !dto.getUsers().isEmpty()) {
 			dto.getUsers().stream().map(el -> userRepository.getOne(el.getId()))

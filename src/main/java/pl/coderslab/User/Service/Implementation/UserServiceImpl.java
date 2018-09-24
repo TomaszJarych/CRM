@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import pl.coderslab.Project.Repository.ProjectRepository;
+import pl.coderslab.Project.Service.ProjectService;
 import pl.coderslab.Project.Service.Implementation.ProjectServiceImpl;
 import pl.coderslab.User.Repository.UserRepository;
 import pl.coderslab.User.Service.UserService;
@@ -20,7 +21,7 @@ public class UserServiceImpl implements UserService {
 
 	private final UserRepository userRepository;
 	private final ProjectRepository projectRepository;
-	private final ProjectServiceImpl projectService;
+	private ProjectService projectService;
 
 	@Autowired
 	public UserServiceImpl(UserRepository userRepository,
@@ -28,6 +29,10 @@ public class UserServiceImpl implements UserService {
 			ProjectServiceImpl projectService) {
 		this.userRepository = userRepository;
 		this.projectRepository = projectRepository;
+	}
+
+	//wstrzyknięcie poprzez setter - aby uniknąć zapętlenia
+	public void setProjectService(ProjectService projectService) {
 		this.projectService = projectService;
 	}
 

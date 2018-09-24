@@ -9,13 +9,13 @@ import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import pl.coderslab.User.dto.UserDto;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class ProjectDto {
 
 	private Long id;
