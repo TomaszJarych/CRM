@@ -6,6 +6,8 @@ import java.util.Set;
 
 import javax.validation.constraints.NotBlank;
 
+import org.hibernate.validator.constraints.URL;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +28,8 @@ public class ProjectDto {
 	private LocalDateTime created = LocalDateTime.now();
 	
 	private String description;
-	
+
+	@URL
 	private String website;
 	
 	private	String identifier;
