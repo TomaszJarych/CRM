@@ -8,6 +8,7 @@ import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import pl.coderslab.Commons.Utils.UserRole;
 import pl.coderslab.Project.dto.ProjectDto;
@@ -31,8 +32,9 @@ public class UserDto {
 
 	private String password;
 
-	@NotBlank
+	@NonNull
 	private UserRole userRole;
 
 	private Set<ProjectDto> projects = new HashSet<>();
+	
 }
