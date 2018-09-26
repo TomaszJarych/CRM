@@ -92,7 +92,7 @@ public class ConverterUtils {
 
 	public ProjectDto toProjectDto(Project project) {
 		ProjectDto dto = new ProjectDto();
-		dto.setId(dto.getId());
+		dto.setId(project.getId());
 		dto.setName(project.getName());
 		dto.setDescription(project.getDescription());
 		dto.setCreated(project.getCreated());
@@ -190,10 +190,10 @@ public class ConverterUtils {
 	public Status toStatusEntity(StatusDto dto) {
 		Status status = new Status();
 
-		status.setId(status.getId());
-		status.setName(status.getName());
-		status.setIsActive(status.getIsActive());
-		status.setSortingOrderNumber(status.getSortingOrderNumber());
+		status.setId(dto.getId());
+		status.setName(dto.getName());
+		status.setIsActive(dto.getIsActive());
+		status.setSortingOrderNumber(dto.getSortingOrderNumber());
 
 		return status;
 	}

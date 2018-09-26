@@ -28,7 +28,10 @@ public class UserServiceImpl implements UserService, Observerable {
 	private final ProjectRepository projectRepository;
 	private final ConverterUtils converter;
 	private Set<Observer> observerList = new HashSet<>();
+
 	
+	// <------------------------ Observerable --------------------------------->
+
 	@Autowired
 	private Observer observer;
 
@@ -47,12 +50,15 @@ public class UserServiceImpl implements UserService, Observerable {
 		this.observerList.forEach(el -> el.addNewActivity(content));
 
 	}
-	
+
 	@PostConstruct
 	public void initObservers() {
 		attatchObserver(observer);
 	}
 
+	// <------------------------ Observerable --------------------------------->
+
+	
 	@Autowired
 	public UserServiceImpl(UserRepository userRepository,
 			ProjectRepository projectRepository, ConverterUtils converter) {
@@ -68,13 +74,19 @@ public class UserServiceImpl implements UserService, Observerable {
 
 	@Override
 	public UserDto save(UserDto dto) {
-		 notifyObservers("User has been saved: "+dto.getFirstName()+" "+dto.getLastName());
+
+		String activity = (dto.getId() == null)
+				? "New User has been saved: " + dto.getFirstName() + " "
+						+ dto.getLastName()
+				: "User has been updated: " + dto.getFirstName() + " "
+						+ dto.getLastName();
+		notifyObservers(activity);
 		return toSimpleDto(userRepository.save(toUserEntity(dto)));
 	}
 
 	@Override
 	public void deleteFromDb(Long id) {
-		
+
 		notifyObservers("User has been deleted form DB");
 		userRepository.deleteById(id);
 	}

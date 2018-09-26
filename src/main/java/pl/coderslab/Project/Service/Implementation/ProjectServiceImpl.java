@@ -1,12 +1,18 @@
 package pl.coderslab.Project.Service.Implementation;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import pl.coderslab.Activity.Observer.Observer;
+import pl.coderslab.Activity.Observer.Subject.Observerable;
 import pl.coderslab.Project.Repository.ProjectRepository;
 import pl.coderslab.Project.Service.ProjectService;
 import pl.coderslab.Project.domain.Project;
@@ -16,17 +22,21 @@ import pl.coderslab.User.Service.UserService;
 import pl.coderslab.User.Service.Implementation.UserServiceImpl;
 
 @Service
-public class ProjectServiceImpl implements ProjectService {
+public class ProjectServiceImpl implements ProjectService, Observerable {
 
 	private final ProjectRepository projectRepository;
 	private final UserRepository userRepository;
 	private UserService userService;
+	private Set<Observer> observerList = new HashSet<>();
+	private final Observer observer;
 
 	@Autowired
 	public ProjectServiceImpl(ProjectRepository projectRepository,
-			UserRepository userRepository) {
+			UserRepository userRepository, Observer observer) {
 		this.projectRepository = projectRepository;
 		this.userRepository = userRepository;
+		this.observer = observer;
+		
 	}
 
 	// wstrzyknięcie poprzez setter - aby uniknąć zapętlenia
@@ -34,6 +44,32 @@ public class ProjectServiceImpl implements ProjectService {
 	public void setUserServiceImp(UserService userService) {
 		this.userService = userService;
 	}
+	
+	
+	// <------------------------ Observerable --------------------------------->
+	@Override
+	public void attatchObserver(Observer observer) {
+		this.observerList.add(observer);
+	}
+
+	@Override
+	public void detatchObserver(Observer observer) {
+		this.observerList.remove(observer);
+
+	}
+	@Override
+	public void notifyObservers(String content) {
+		this.observerList.forEach(el -> el.addNewActivity(content));
+
+	}
+
+	@PostConstruct
+	public void initObservers() {
+		attatchObserver(observer);
+	}
+	
+	// <------------------------ Observerable --------------------------------->
+
 
 	@Override
 	public ProjectDto findById(Long id) {
@@ -42,11 +78,19 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	public ProjectDto save(ProjectDto dto) {
+		
+		String activity = (dto.getId() == null)
+				? "New Project has been saved: " + dto.getName()
+				: "Project has been updated: " + dto.getName();
+		notifyObservers(activity);
+		
 		return toDto(projectRepository.save(toEntityProject(dto)));
 	}
 
 	@Override
 	public void deleteFromDb(Long id) {
+		
+		notifyObservers("Project has been deleted");
 		projectRepository.deleteById(id);
 	}
 
@@ -54,10 +98,16 @@ public class ProjectServiceImpl implements ProjectService {
 	public List<ProjectDto> getAll() {
 		return toDtoList(projectRepository.findAll());
 	}
+	
+
+	@Override
+	public List<ProjectDto> findFirst5ByOrderByCreatedDesc() {
+		return toDtoList(projectRepository.findFirst5ByOrderByCreatedDesc());
+	}
 
 	private ProjectDto toDto(Project project) {
 		ProjectDto dto = new ProjectDto();
-		dto.setId(dto.getId());
+		dto.setId(project.getId());
 		dto.setName(project.getName());
 		dto.setDescription(project.getDescription());
 		dto.setCreated(project.getCreated());

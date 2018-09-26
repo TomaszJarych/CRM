@@ -1,9 +1,15 @@
 package pl.coderslab.Task.Service.Implementation;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+
+import pl.coderslab.Activity.Observer.Observer;
+import pl.coderslab.Activity.Observer.Subject.Observerable;
 import pl.coderslab.Commons.EntityConverter.ConverterUtils;
 import pl.coderslab.Priority.Repository.PriorityRepository;
 import pl.coderslab.Project.Repository.ProjectRepository;
@@ -14,7 +20,7 @@ import pl.coderslab.Task.domain.Task;
 import pl.coderslab.Task.dto.TaskDto;
 import pl.coderslab.User.Repository.UserRepository;
 
-public class TaskServiceImpl implements TaskService {
+public class TaskServiceImpl implements TaskService, Observerable {
 
 	private final TaskRepository taskRepository;
 	private final UserRepository userRepository;
@@ -23,18 +29,46 @@ public class TaskServiceImpl implements TaskService {
 	private final PriorityRepository priorityRepository;
 	private final ConverterUtils converterUtils;
 
+	private Set<Observer> observerList = new HashSet<>();
+	private final Observer observer;
+
 	public TaskServiceImpl(TaskRepository taskRepository,
 			UserRepository userRepository, ProjectRepository projectRepository,
 			StatusRepository statusRepository,
 			PriorityRepository priorityRepository,
-			ConverterUtils converterUtils) {
+			ConverterUtils converterUtils, Observer observer) {
 		this.taskRepository = taskRepository;
 		this.userRepository = userRepository;
 		this.projectRepository = projectRepository;
 		this.statusRepository = statusRepository;
 		this.priorityRepository = priorityRepository;
 		this.converterUtils = converterUtils;
+		this.observer = observer;
 	}
+
+	// <------------------------ Observerable --------------------------------->
+	@Override
+	public void attatchObserver(Observer observer) {
+		this.observerList.add(observer);
+	}
+
+	@Override
+	public void detatchObserver(Observer observer) {
+		this.observerList.remove(observer);
+
+	}
+	@Override
+	public void notifyObservers(String content) {
+		this.observerList.forEach(el -> el.addNewActivity(content));
+
+	}
+
+	@PostConstruct
+	public void initObservers() {
+		attatchObserver(observer);
+	}
+
+	// <------------------------ Observerable --------------------------------->
 
 	@Override
 	public TaskDto findById(Long id) {
@@ -44,12 +78,18 @@ public class TaskServiceImpl implements TaskService {
 
 	@Override
 	public TaskDto save(TaskDto dto) {
+		String activity = (dto.getId() == null)
+				? "New Task has been saved: " + dto.getTopic()
+				: "Task has been updated: " + dto.getTopic();
+		notifyObservers(activity);
+
 		return toTaskDto(taskRepository.save(toTaskEntity(dto)));
 	}
 
 	@Override
 	public void deleteFromDb(Long id) {
 		taskRepository.deleteById(id);
+		notifyObservers("Task has been deleted");
 
 	}
 

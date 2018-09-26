@@ -72,4 +72,9 @@ public class ProjectController {
 	public List<ProjectDto> getAllProjects(){
 		return projectService.getAll();
 	}
+	
+	@GetMapping(path ="/last", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<ProjectDto> getLastProjects(){
+		return projectService.findFirst5ByOrderByCreatedDesc();
+	}
 }

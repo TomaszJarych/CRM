@@ -45,6 +45,13 @@ public class ActivityServiceImpl implements ActivityService {
 	public List<ActivityDto> getAll() {
 		return toActivityDtosList(activityRepository.findAll());
 	}
+	
+	@Override
+	public List<ActivityDto> findFirst25ByOrderByCreatedDesc() {
+		return toActivityDtosList(activityRepository.findFirst25ByOrderByCreatedDesc());
+	}
+	
+	
 
 	private ActivityDto toActivityDto(Activity activity) {
 		ActivityDto dto = new ActivityDto(activity.getContent());

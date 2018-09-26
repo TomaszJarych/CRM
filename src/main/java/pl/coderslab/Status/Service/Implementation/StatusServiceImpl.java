@@ -1,26 +1,61 @@
 package pl.coderslab.Status.Service.Implementation;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import pl.coderslab.Activity.Observer.Observer;
+import pl.coderslab.Activity.Observer.Subject.Observerable;
 import pl.coderslab.Status.Repository.StatusRepository;
 import pl.coderslab.Status.Service.StatusService;
 import pl.coderslab.Status.domain.Status;
 import pl.coderslab.Status.dto.StatusDto;
 
 @Service
-public class StatusServiceImpl implements StatusService {
+public class StatusServiceImpl implements StatusService, Observerable {
 
 	private final StatusRepository statusRepository;
 
+	private Set<Observer> observerList = new HashSet<>();
+	private final Observer observer;
+
 	@Autowired
-	public StatusServiceImpl(StatusRepository statusRepository) {
+	public StatusServiceImpl(StatusRepository statusRepository,
+			Observer observer) {
 		this.statusRepository = statusRepository;
+		this.observer = observer;
 	}
+
+	// <------------------------ Observerable --------------------------------->
+	@Override
+	public void attatchObserver(Observer observer) {
+		this.observerList.add(observer);
+	}
+
+	@Override
+	public void detatchObserver(Observer observer) {
+		this.observerList.remove(observer);
+
+	}
+	@Override
+	public void notifyObservers(String content) {
+		this.observerList.forEach(el -> el.addNewActivity(content));
+
+	}
+
+	@PostConstruct
+	public void initObservers() {
+		attatchObserver(observer);
+	}
+
+	// <------------------------ Observerable --------------------------------->
 
 	@Override
 	public StatusDto findById(Long id) {
@@ -29,12 +64,17 @@ public class StatusServiceImpl implements StatusService {
 
 	@Override
 	public StatusDto save(StatusDto dto) {
+		String activity = (dto.getId() == null)
+				? "New Status has been saved: " + dto.getName()
+				: "Status has been updated: " + dto.getName();
+		notifyObservers(activity);
 		return toDto(statusRepository.save(toEntityStatus(dto)));
 	}
 
 	@Override
 	public void deleteFromDb(Long id) {
 		statusRepository.deleteById(id);
+		notifyObservers("Status has been deleted");
 	}
 
 	@Override
@@ -56,10 +96,10 @@ public class StatusServiceImpl implements StatusService {
 	private Status toEntityStatus(StatusDto dto) {
 		Status status = new Status();
 
-		status.setId(status.getId());
-		status.setName(status.getName());
-		status.setIsActive(status.getIsActive());
-		status.setSortingOrderNumber(status.getSortingOrderNumber());
+		status.setId(dto.getId());
+		status.setName(dto.getName());
+		status.setIsActive(dto.getIsActive());
+		status.setSortingOrderNumber(dto.getSortingOrderNumber());
 
 		return status;
 	}
