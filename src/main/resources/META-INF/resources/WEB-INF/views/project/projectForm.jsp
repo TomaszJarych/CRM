@@ -32,7 +32,6 @@
 			<form:options items="${users}"  itemValue="id" itemLabel="fullName" />
 			</form:select>
 			<form:errors path="users" cssClass="errors"></form:errors>
-
 		</h3>
 
 		<h3>

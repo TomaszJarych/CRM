@@ -1,6 +1,7 @@
 package pl.coderslab.Task.dto;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.validation.constraints.NotBlank;
 
@@ -34,5 +35,11 @@ public class TaskDto {
 	private PriorityDto priority;
 
 	private UserDto user;
+	
+
+	public String getFullDate() {
+		return this.created
+				.format(DateTimeFormatter.ofPattern("d MMM uuuu  HH:mm:ss"));
+	}
 
 }

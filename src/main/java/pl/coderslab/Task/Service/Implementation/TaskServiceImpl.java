@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import org.springframework.stereotype.Service;
+
 import pl.coderslab.Activity.Observer.Observer;
 import pl.coderslab.Activity.Observer.Subject.Observerable;
 import pl.coderslab.Commons.EntityConverter.ConverterUtils;
@@ -20,6 +22,7 @@ import pl.coderslab.Task.domain.Task;
 import pl.coderslab.Task.dto.TaskDto;
 import pl.coderslab.User.Repository.UserRepository;
 
+@Service
 public class TaskServiceImpl implements TaskService, Observerable {
 
 	private final TaskRepository taskRepository;
@@ -91,6 +94,12 @@ public class TaskServiceImpl implements TaskService, Observerable {
 		taskRepository.deleteById(id);
 		notifyObservers("Task has been deleted");
 
+	}
+	
+
+	@Override
+	public List<TaskDto> findAllByProjectId(Long id) {
+		return toListTaskDto(taskRepository.findAllByProjectId(id));
 	}
 
 	@Override
