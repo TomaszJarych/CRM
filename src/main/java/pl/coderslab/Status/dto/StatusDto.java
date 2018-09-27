@@ -13,18 +13,22 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StatusDto {
-	
-	
+
 	private Long id;
-	
+
 	@NotBlank
 	private String name;
-	
+
 	private Boolean isActive;
-	
-	@Min(0)
+
+	@Min(value = 1)
 	private Long sortingOrderNumber;
-	
-	
+
+	public String getIsStatusActive() {
+		if (getIsActive() == null) {
+			return "No";
+		}
+		return getIsActive() ? "Yes" : "No";
+	}
 
 }

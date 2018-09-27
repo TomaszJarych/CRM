@@ -20,5 +20,11 @@ public class PriorityDto {
 	
 	private Boolean isActive;
 	
+	public String getIsPriorityActive() {
+		if (getIsActive() == null) {
+			return "No";
+		}
+		return getIsActive() ? "Yes" : "No";
+	}
 	
 }
