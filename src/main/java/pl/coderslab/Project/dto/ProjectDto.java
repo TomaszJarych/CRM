@@ -1,6 +1,7 @@
 package pl.coderslab.Project.dto;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,21 +22,34 @@ import pl.coderslab.User.dto.UserDto;
 public class ProjectDto {
 
 	private Long id;
-	
+
 	@NotBlank
 	private String name;
-	
+
 	private LocalDateTime created = LocalDateTime.now();
-	
+
 	private String description;
 
 	@URL
 	private String website;
-	
-	private	String identifier;
-	
+
+	private String identifier;
+
 	private Set<UserDto> users = new HashSet<>();
-	
+
 	private Boolean isActive;
-	
+
+	public String getIsProjectActive() {
+		if (getIsActive() == null) {
+			return "No";
+		}
+		return getIsActive() ? "Yes" : "No";
+	}
+
+	public String getFullDate() {
+
+		return this.created
+				.format(DateTimeFormatter.ofPattern("d MMM uuuu  HH:mm:ss"));
+	}
+
 }
