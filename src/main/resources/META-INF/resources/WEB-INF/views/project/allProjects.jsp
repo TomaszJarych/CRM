@@ -9,34 +9,34 @@
 <title>Project</title>
 </head>
 <body>
+	<div align="center">
+		<h1>Project</h1>
 
-
-<div align="center">
-	<h1>Project</h1>
-	
-	<table align="center">
-		<tr>
-			<th>Name</th>
-			<th>Identifier</th>
-			<th>Is active?</th>
-			<th>Created</th>
-			<th>Tasks</th>
-			<th>Action</th>
-		</tr>
-		<c:forEach items="${projects }" var="project">
+		<table align="center">
 			<tr>
-				<td align="center">${project.name}</td>
-				<td align="center">${project.identifier}</td>
-				<td align="center">${project.isProjectActive}</td>
-				<td align="center">${project.fullDate}</td>
-				<td align="center"><a href="../task/getTaskByProjectId/${project.id}">Tasks</a></td>
-				<td align="center"><a href="../project/delete/${project.id}">Delete</a><a
-					href="../project/edit/${project.id}"> | Edit</a> <a href="../project/detail/${project.id}"> | Details</a></td>
+				<th>Name</th>
+				<th>Identifier</th>
+				<th>Is active?</th>
+				<th>Created</th>
+				<th>Tasks</th>
+				<th>Action</th>
 			</tr>
-		</c:forEach>
-	</table>
+			<c:forEach items="${projects }" var="project">
+				<tr>
+					<td align="center">${project.name}</td>
+					<td align="center">${project.identifier}</td>
+					<td align="center">${project.isProjectActive}</td>
+					<td align="center">${project.fullDate}</td>
+					<td align="center"><a
+						href="../task/getTaskByProjectId/${project.id}">Tasks</a></td>
+					<td align="center"><a href="../project/delete/${project.id}">Delete</a><a
+						href="../project/edit/${project.id}"> | Edit</a> <a
+						href="../project/details/${project.id}"> | Details</a></td>
+				</tr>
+			</c:forEach>
+		</table>
 
-</div>
+	</div>
 
 </body>
 </html>

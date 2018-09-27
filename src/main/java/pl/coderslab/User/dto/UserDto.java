@@ -37,4 +37,8 @@ public class UserDto {
 
 	private Set<ProjectDto> projects = new HashSet<>();
 	
+	public String getFullName() {
+		return this.firstName+" "+this.lastName;
+	}
+	
 }

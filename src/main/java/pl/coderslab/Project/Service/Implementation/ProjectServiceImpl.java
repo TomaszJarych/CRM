@@ -113,6 +113,7 @@ public class ProjectServiceImpl implements ProjectService, Observerable {
 		dto.setCreated(project.getCreated());
 		dto.setIdentifier(project.getIdentifier());
 		dto.setIsActive(project.getIsActive());
+		dto.setWebsite(project.getWebsite());
 
 		if (Objects.nonNull(project.getUsers()) && !project.getUsers().isEmpty()) {
 			project.getUsers().stream()
@@ -164,10 +165,12 @@ public class ProjectServiceImpl implements ProjectService, Observerable {
 		project.setWebsite(dto.getWebsite());
 
 		if (Objects.nonNull(dto.getUsers()) && !dto.getUsers().isEmpty()) {
+			project.getUsers().clear();
 			dto.getUsers().stream().map(el -> userRepository.getOne(el.getId()))
 					.forEach(el -> project.getUsers().add(el));
 
 		}
+
 		return project;
 	}
 
