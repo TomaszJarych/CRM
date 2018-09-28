@@ -9,6 +9,14 @@
 <title>Project Details: ${project.name}</title>
 </head>
 <body>
+<div>
+		<h3>Menu</h3>
+		<h4>
+			<a href="${pageContext.request.contextPath}/index">Index page</a>
+			<a href="${pageContext.request.contextPath}/logout">Logout</a>
+			<a href="${pageContext.request.contextPath}/index/adminPanel">Admin panel</a>
+		</h4>
+	</div>
 	<div>
 		<a href="${pageContext.request.contextPath}/project/all">Projects
 			main page</a>

@@ -9,6 +9,14 @@
 <title>Project</title>
 </head>
 <body>
+<div>
+		<h3>Menu</h3>
+		<h4>
+			<a href="${pageContext.request.contextPath}/index">Index page</a>
+			<a href="${pageContext.request.contextPath}/logout">Logout</a>
+			<a href="${pageContext.request.contextPath}/index/adminPanel">Admin panel</a>
+		</h4>
+	</div>
 	<div align="center">
 		<h1>Project</h1>
 
@@ -28,7 +36,9 @@
 					<td align="center">${project.isProjectActive}</td>
 					<td align="center">${project.fullDate}</td>
 					<td align="center"><a
-						href="../task/getTaskByProjectId/${project.id}">Tasks</a></td>
+						href="../task/getTaskByProjectId/${project.id}">Tasks</a>
+						<td align="center"><a
+						href="../task/add/${project.id}"> | Add new task</a></td>
 					<td align="center"><a href="../project/delete/${project.id}">Delete</a><a
 						href="../project/edit/${project.id}"> | Edit</a> <a
 						href="../project/details/${project.id}"> | Details</a></td>

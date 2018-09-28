@@ -8,6 +8,14 @@
 <title>Add new Status:</title>
 </head>
 <body>
+<div>
+		<h3>Menu</h3>
+		<h4>
+			<a href="${pageContext.request.contextPath}/index">Index page</a>
+			<a href="${pageContext.request.contextPath}/logout">Logout</a>
+			<a href="${pageContext.request.contextPath}/index/adminPanel">Admin panel</a>
+		</h4>
+	</div>
 	<h1 align="center">Add new status</h1>
 
 	<form:form method="post" modelAttribute="status" action="add">

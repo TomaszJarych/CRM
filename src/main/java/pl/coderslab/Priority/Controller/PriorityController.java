@@ -1,4 +1,4 @@
-package pl.coderslab.Priority;
+package pl.coderslab.Priority.Controller;
 
 import javax.validation.Valid;
 

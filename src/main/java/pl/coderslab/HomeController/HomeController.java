@@ -51,7 +51,7 @@ public class HomeController {
 		
 		model.addAttribute("loggedUser", new UserDto());
 		
-		return "login/loginPage";
+		return "redirect:/";
 	}
 	
 	

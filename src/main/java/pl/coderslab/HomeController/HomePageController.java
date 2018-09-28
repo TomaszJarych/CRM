@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import pl.coderslab.Activity.Service.ActivityService;
+import pl.coderslab.Commons.Utils.UserRole;
 import pl.coderslab.Priority.Service.PriorityService;
 import pl.coderslab.Project.Service.ProjectService;
 import pl.coderslab.Status.Service.StatusService;
@@ -50,6 +51,14 @@ public class HomePageController {
 		model.addAttribute("projects", projectService.findFirst5ByOrderByCreatedDesc());
 		model.addAttribute("activities", activityService.findFirst25ByOrderByCreatedDesc());
 		return "index";
+	}
+	
+	@GetMapping("/adminPanel")
+	public String getAdminPanel(@SessionAttribute("loggedUser")UserDto dto,Model model) {
+		if (dto.getId() == null || !dto.getUserRole().equals(UserRole.ADMIN)) {
+			return "redirect:/";
+		}
+		return "user/adminPanel";
 	}
 	
 
