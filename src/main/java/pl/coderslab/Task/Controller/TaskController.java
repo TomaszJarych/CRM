@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
+import pl.coderslab.Commons.Utils.UserRole;
 import pl.coderslab.Priority.Service.PriorityService;
 import pl.coderslab.Priority.dto.PriorityDto;
 import pl.coderslab.Project.Service.ProjectService;
@@ -22,9 +25,11 @@ import pl.coderslab.Status.dto.StatusDto;
 import pl.coderslab.Task.Service.TaskService;
 import pl.coderslab.Task.dto.TaskDto;
 import pl.coderslab.User.Service.UserService;
+import pl.coderslab.User.dto.UserDto;
 
 @Controller
 @RequestMapping("/task")
+@SessionAttributes("loggedUser")
 public class TaskController {
 
 	private final TaskService taskService;
@@ -47,7 +52,12 @@ public class TaskController {
 	// <--------------------------------RequestMappings---------------------------------->
 
 	@GetMapping("/all")
-	public String getAllTask(Model model) {
+	public String getAllTask(Model model,
+			@SessionAttribute("loggedUser") UserDto loggedUser) {
+		if (loggedUser.getId() == null
+				|| !loggedUser.getUserRole().equals(UserRole.ADMIN)) {
+			return "redirect:/";
+		}
 
 		model.addAttribute("tasks", taskService.getAll());
 
@@ -55,7 +65,12 @@ public class TaskController {
 	}
 
 	@GetMapping("/add/{id}")
-	public String addNewTask(@PathVariable("id") Long id, Model model) {
+	public String addNewTask(@PathVariable("id") Long id, Model model,
+			@SessionAttribute("loggedUser") UserDto loggedUser) {
+		if (loggedUser.getId() == null
+				|| !loggedUser.getUserRole().equals(UserRole.ADMIN)) {
+			return "redirect:/";
+		}
 
 		model.addAttribute("project", projectService.findById(id));
 		model.addAttribute("task", new TaskDto());
@@ -66,22 +81,31 @@ public class TaskController {
 
 	@PostMapping("/add/**")
 	public String processNewTask(@Valid @ModelAttribute("task") TaskDto dto,
-			BindingResult result) {
+			BindingResult result,
+			@SessionAttribute("loggedUser") UserDto loggedUser) {
+		if (loggedUser.getId() == null
+				|| !loggedUser.getUserRole().equals(UserRole.ADMIN)) {
+			return "redirect:/";
+		}
 		if (result.hasErrors()) {
 			return "task/taskForm";
 		}
 		taskService.save(dto);
 		return "redirect:/task/all";
 	}
-	
-	
-	@GetMapping("/edit/{id}")
-	public String editTask(@PathVariable("id") Long id, Model model) {
-		TaskDto dto = taskService.findById(id);
-		
-		model.addAttribute("task", dto);
-		model.addAttribute("project", projectService.findById(dto.getProject().getId()));
 
+	@GetMapping("/edit/{id}")
+	public String editTask(@PathVariable("id") Long id, Model model,
+			@SessionAttribute("loggedUser") UserDto loggedUser) {
+		if (loggedUser.getId() == null
+				|| !loggedUser.getUserRole().equals(UserRole.ADMIN)) {
+			return "redirect:/";
+		}
+		TaskDto dto = taskService.findById(id);
+
+		model.addAttribute("task", dto);
+		model.addAttribute("project",
+				projectService.findById(dto.getProject().getId()));
 
 		return "task/taskForm";
 
@@ -89,26 +113,39 @@ public class TaskController {
 
 	@PostMapping("/edit/**")
 	public String processEditTask(@Valid @ModelAttribute("task") TaskDto dto,
-			BindingResult result) {
+			BindingResult result,
+			@SessionAttribute("loggedUser") UserDto loggedUser) {
+		if (loggedUser.getId() == null
+				|| !loggedUser.getUserRole().equals(UserRole.ADMIN)) {
+			return "redirect:/";
+		}
 		if (result.hasErrors()) {
 			return "task/taskForm";
 		}
 		taskService.save(dto);
 		return "redirect:/task/all";
 	}
-	
-	
+
 	@GetMapping("/delete/{id}")
-	public String deleteTask(@PathVariable("id")Long id) {
-		
+	public String deleteTask(@PathVariable("id") Long id,
+			@SessionAttribute("loggedUser") UserDto loggedUser) {
+		if (loggedUser.getId() == null
+				|| !loggedUser.getUserRole().equals(UserRole.ADMIN)) {
+			return "redirect:/";
+		}
+
 		taskService.deleteFromDb(id);
-		
+
 		return "redirect:/task/all";
 	}
-	
+
 	@GetMapping("/getTaskByProjectId/{id}")
-	public String getTaskByProjectId(@PathVariable("id")Long id, Model model) {
-		
+	public String getTaskByProjectId(@PathVariable("id") Long id, Model model,
+			@SessionAttribute("loggedUser") UserDto loggedUser) {
+		if (loggedUser.getId() == null || loggedUser == null) {
+			return "redirect:/";
+		}
+
 		model.addAttribute("tasks", taskService.findAllByProjectId(id));
 
 		return "task/allTasks";

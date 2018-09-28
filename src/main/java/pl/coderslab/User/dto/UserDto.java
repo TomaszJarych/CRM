@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import pl.coderslab.Commons.Utils.UserRole;
+import pl.coderslab.Commons.Validator.UniqueLogin;
 import pl.coderslab.Project.dto.ProjectDto;
 
 @NoArgsConstructor
@@ -22,6 +23,7 @@ public class UserDto {
 	private Long id;
 
 	@NotBlank
+	@UniqueLogin
 	private String login;
 
 	@NotBlank

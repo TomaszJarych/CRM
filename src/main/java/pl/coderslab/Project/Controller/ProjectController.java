@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
+import pl.coderslab.Commons.Utils.UserRole;
 import pl.coderslab.Project.Service.ProjectService;
 import pl.coderslab.Project.dto.ProjectDto;
 import pl.coderslab.User.Service.UserService;
@@ -21,6 +24,7 @@ import pl.coderslab.User.dto.UserDto;
 
 @Controller
 @RequestMapping("/project")
+@SessionAttributes("loggedUser")
 public class ProjectController {
 
 	private final ProjectService projectService;
@@ -36,7 +40,12 @@ public class ProjectController {
 	// <--------------------------------RequestMappings---------------------------------->
 
 	@GetMapping("/all")
-	public String allProjects(Model model) {
+	public String allProjects(Model model,
+			@SessionAttribute("loggedUser") UserDto loggedUser) {
+		if (loggedUser.getId() == null
+				|| !loggedUser.getUserRole().equals(UserRole.ADMIN)) {
+			return "redirect:/";
+		}
 
 		model.addAttribute("projects", projectService.getAll());
 
@@ -44,7 +53,12 @@ public class ProjectController {
 	}
 
 	@GetMapping("/add")
-	public String addNewProject(Model model) {
+	public String addNewProject(Model model,
+			@SessionAttribute("loggedUser") UserDto loggedUser) {
+		if (loggedUser.getId() == null
+				|| !loggedUser.getUserRole().equals(UserRole.ADMIN)) {
+			return "redirect:/";
+		}
 
 		model.addAttribute("project", new ProjectDto());
 
@@ -54,7 +68,12 @@ public class ProjectController {
 	@PostMapping("/add")
 	public String processNewProject(
 			@Valid @ModelAttribute("project") ProjectDto dto,
-			BindingResult result) {
+			BindingResult result,
+			@SessionAttribute("loggedUser") UserDto loggedUser) {
+		if (loggedUser.getId() == null
+				|| !loggedUser.getUserRole().equals(UserRole.ADMIN)) {
+			return "redirect:/";
+		}
 		if (result.hasErrors()) {
 			return "project/projectForm";
 		}
@@ -64,7 +83,11 @@ public class ProjectController {
 	}
 
 	@GetMapping("/details/{id}")
-	public String projectDetails(@PathVariable("id") Long id, Model model) {
+	public String projectDetails(@PathVariable("id") Long id, Model model,
+			@SessionAttribute("loggedUser") UserDto loggedUser) {
+		if (loggedUser.getId() == null || loggedUser == null) {
+			return "redirect:/";
+		}
 
 		model.addAttribute("project", projectService.findById(id));
 
@@ -72,7 +95,12 @@ public class ProjectController {
 	}
 
 	@GetMapping("/edit/{id}")
-	public String editProject(@PathVariable("id") Long id, Model model) {
+	public String editProject(@PathVariable("id") Long id, Model model,
+			@SessionAttribute("loggedUser") UserDto loggedUser) {
+		if (loggedUser.getId() == null
+				|| !loggedUser.getUserRole().equals(UserRole.ADMIN)) {
+			return "redirect:/";
+		}
 
 		model.addAttribute("project", projectService.findById(id));
 
@@ -82,7 +110,12 @@ public class ProjectController {
 	@PostMapping("/edit/**")
 	public String processEditProject(
 			@Valid @ModelAttribute("project") ProjectDto dto,
-			BindingResult result) {
+			BindingResult result,
+			@SessionAttribute("loggedUser") UserDto loggedUser) {
+		if (loggedUser.getId() == null
+				|| !loggedUser.getUserRole().equals(UserRole.ADMIN)) {
+			return "redirect:/";
+		}
 		if (result.hasErrors()) {
 			return "project/projectForm";
 		}
@@ -92,7 +125,12 @@ public class ProjectController {
 	}
 
 	@GetMapping("/delete/{id}")
-	public String deleteProject(@PathVariable("id") Long id) {
+	public String deleteProject(@PathVariable("id") Long id,
+			@SessionAttribute("loggedUser") UserDto loggedUser) {
+		if (loggedUser.getId() == null
+				|| !loggedUser.getUserRole().equals(UserRole.ADMIN)) {
+			return "redirect:/";
+		}
 
 		projectService.deleteFromDb(id);
 

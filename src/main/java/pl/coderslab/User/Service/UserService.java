@@ -7,5 +7,7 @@ import pl.coderslab.User.dto.UserDto;
 public interface UserService extends BaseCrudService<UserDto, Long> {
 
 	UserDto toSimpleDto(User user);
+	
+	UserDto findUserByLogin(String login);
 
 }

@@ -10,12 +10,17 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
+import pl.coderslab.Commons.Utils.UserRole;
 import pl.coderslab.Status.Service.StatusService;
 import pl.coderslab.Status.dto.StatusDto;
+import pl.coderslab.User.dto.UserDto;
 
 @Controller
 @RequestMapping("/status")
+@SessionAttributes("loggedUser")
 public class StatusController {
 
 	private final StatusService statusService;
@@ -25,7 +30,12 @@ public class StatusController {
 	}
 
 	@RequestMapping("/all")
-	public String getAllStatuses(Model model) {
+	public String getAllStatuses(Model model,
+			@SessionAttribute("loggedUser") UserDto loggedUser) {
+		if (loggedUser.getId() == null
+				|| !loggedUser.getUserRole().equals(UserRole.ADMIN)) {
+			return "redirect:/";
+		}
 
 		model.addAttribute("statuses", statusService.getAll());
 
@@ -33,7 +43,12 @@ public class StatusController {
 	}
 
 	@GetMapping("/add")
-	public String getNewStatus(Model model) {
+	public String getNewStatus(Model model,
+			@SessionAttribute("loggedUser") UserDto loggedUser) {
+		if (loggedUser.getId() == null
+				|| !loggedUser.getUserRole().equals(UserRole.ADMIN)) {
+			return "redirect:/";
+		}
 
 		model.addAttribute("status", new StatusDto());
 
@@ -43,7 +58,12 @@ public class StatusController {
 	@PostMapping("/add")
 	public String processNewStatus(
 			@Valid @ModelAttribute("status") StatusDto dto,
-			BindingResult result) {
+			BindingResult result,
+			@SessionAttribute("loggedUser") UserDto loggedUser) {
+		if (loggedUser.getId() == null
+				|| !loggedUser.getUserRole().equals(UserRole.ADMIN)) {
+			return "redirect:/";
+		}
 		if (result.hasErrors()) {
 			return "/status/statusForm";
 		}
@@ -54,7 +74,12 @@ public class StatusController {
 	}
 
 	@GetMapping("/edit/{id}")
-	public String editStatus(@PathVariable("id") Long id, Model model) {
+	public String editStatus(@PathVariable("id") Long id, Model model,
+			@SessionAttribute("loggedUser") UserDto loggedUser) {
+		if (loggedUser.getId() == null
+				|| !loggedUser.getUserRole().equals(UserRole.ADMIN)) {
+			return "redirect:/";
+		}
 
 		model.addAttribute("status", statusService.findById(id));
 
@@ -64,7 +89,12 @@ public class StatusController {
 	@PostMapping("/edit/**")
 	public String processEditStatus(
 			@Valid @ModelAttribute("status") StatusDto dto,
-			BindingResult result) {
+			BindingResult result,
+			@SessionAttribute("loggedUser") UserDto loggedUser) {
+		if (loggedUser.getId() == null
+				|| !loggedUser.getUserRole().equals(UserRole.ADMIN)) {
+			return "redirect:/";
+		}
 		if (result.hasErrors()) {
 			return "/status/statusForm";
 		}
@@ -75,7 +105,12 @@ public class StatusController {
 	}
 
 	@GetMapping("/delete/{id}")
-	public String deleteStatus(@PathVariable("id") Long id) {
+	public String deleteStatus(@PathVariable("id") Long id,
+			@SessionAttribute("loggedUser") UserDto loggedUser) {
+		if (loggedUser.getId() == null
+				|| !loggedUser.getUserRole().equals(UserRole.ADMIN)) {
+			return "redirect:/";
+		}
 
 		statusService.deleteFromDb(id);
 

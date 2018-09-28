@@ -95,6 +95,11 @@ public class UserServiceImpl implements UserService, Observerable {
 	public List<UserDto> getAll() {
 		return toDtoList(userRepository.findAll());
 	}
+	
+	@Override
+	public UserDto findUserByLogin(String login) {
+		return toDto(userRepository.findUserByLogin(login));
+	}
 
 	public UserDto toSimpleDto(User user) {
 		UserDto dto = new UserDto();

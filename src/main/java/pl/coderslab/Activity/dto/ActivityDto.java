@@ -1,6 +1,7 @@
 package pl.coderslab.Activity.dto;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,11 @@ public class ActivityDto {
 
 	public ActivityDto(String content) {
 		this.content = content;
+	}
+
+	public String getFullDate() {
+		return this.created
+				.format(DateTimeFormatter.ofPattern("d MMM uuuu  HH:mm:ss"));
 	}
 
 }

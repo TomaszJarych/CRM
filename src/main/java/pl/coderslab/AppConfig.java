@@ -1,6 +1,9 @@
 package pl.coderslab;
+import javax.validation.Validator;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import pl.coderslab.Converter.UserConverter;
 
@@ -11,5 +14,10 @@ public class AppConfig {
 	public UserConverter getUserConverter() {
 		return new UserConverter();
 	}
+
+//	@Bean
+//	public Validator validator() {
+//		return new LocalValidatorFactoryBean();
+//	}
 
 }
